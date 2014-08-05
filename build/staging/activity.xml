@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<activity interactiveSpacesVersion="[1.0.0, 2.0.0)">
+    <name>InteractiveSpaces LiquidGalaxy GoogleMaps</name>
+    <description>
+An InteractiveSpaces activity that runs on LiquidGalaxy environment that executes a GoogleMaps on a browser
+    </description>
+
+    <identifyingName>interactivespaces.liquidgalaxy.googlemaps</identifyingName>
+    <version>1.0.0</version>
+
+
+</activity>
