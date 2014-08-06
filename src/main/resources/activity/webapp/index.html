@@ -6,7 +6,7 @@
 
 <head>
 
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Simple Web Activity Example</title>
 
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -15,12 +15,35 @@
 
 		<script src="js/map_earth.js"></script>
 		<script src="js/webspeech.js"></script>
-		
+		<script>
+
+var normalize = (function() {
+  var from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç",
+      to   = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc",
+      mapping = {};
+ 
+  for(var i = 0, j = from.length; i < j; i++ )
+      mapping[ from.charAt( i ) ] = to.charAt( i );
+ 
+  return function( str ) {
+      var ret = [];
+      for( var i = 0, j = str.length; i < j; i++ ) {
+          var c = str.charAt( i );
+          if( mapping.hasOwnProperty( str.charAt( i ) ) )
+              ret.push( mapping[ c ] );
+          else
+              ret.push( c );
+      }
+      return ret.join( '' );
+  }
+ 
+})();
+</script>
 		
 	<script type="text/javascript">
 		var ws; 
 		$(document).ready(function () {
-		  ws = new WebSocket("ws://localhost:9000/websocket"); 
+		  ws = new WebSocket("ws://10.42.42.1:9000/websocket"); 
 		  ws.onopen = function(event) { 
 		      $('#status').text("The WebSocket Connection Is Open."); 
 		  }
@@ -34,7 +57,7 @@
 		}); 
 
 		function send_voice(name) {
-			console.log(name);
+			name=normalize(name);
 			var message = JSON.stringify({message: name});
 			ws.send(message);
 		}
@@ -43,24 +66,33 @@
       html, body, #map-canvas {
         height: 100%;
         margin: 0px;
-        padding: 0px
+        padding: 0px;
+
       }
+	#box{
+		position: absolute;
+		background-color: transparent;
+	z-index:2;
+	margin-left: 70%;
+	text-align:center;
+	}
     </style>
 
 </head>
 
 <body onload="map_earth()">
-
-	<h1>IS and LG - GoogleMaps control</h1>
-	<form method="post">
-	<input name="poi" id="input_field" size="100" style="visibility:hidden">
-	</form>
-	<button onclick="reco.toggleStartStop()" style="border: 0; background-color:transparent">
-	<img id="status_img" src="img/mic.gif" alt="Start"></button>
-
-
- <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <div id="map-canvas"></div>
+	<div id="box">
+		<h1>IS & LG - GoogleMaps control</h1>
+		<form method="post">
+		<!--<input name="poi" id="input_field" size="20" style="visibility:hidden">-->
+		</form>
+		<button onclick="reco.toggleStartStop()" style="border: 0; background-color:transparent">
+		<img id="status_img" src="img/mic.gif" alt="Start"></button>
+	</div>
+	<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+	
+	<div id="map-canvas">
+	</div>
 
 </body>
 
@@ -71,7 +103,7 @@
 var reco = new WebSpeechRecognition();
 reco.statusText('status');
 reco.statusImage('status_img');
-reco.finalResults('input_field');
+reco.finalResults('pac-input');
 
 reco.onEnd = function() {
 	if (reco.final_transcript != '') {
